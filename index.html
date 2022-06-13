@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="Konva demo">
+    <script src="https://unpkg.com/konva@8.3.2/konva.min.js"></script>
+    <meta charset="utf-8">
+    <title>Konva</title>
+</head>
+<body>
+<div id="container"></div>
+</body>
+</html>
+<script>
+    const stage = new Konva.Stage({
+        container: 'container',
+        width: window.innerWidth,
+        height: window.innerHeight,
+    }),
+
+    layer = new Konva.Layer({
+        name: 'layer'
+    }),
+    group = new Konva.Group({
+        name: 'group', draggable: true
+    }),
+    line = new Konva.Line({
+        name: 'the line',
+        x: window.innerWidth / 2,
+        y: 0,
+        points: [0, 0, 0, window.innerHeight / 2],
+        strokeWidth: 5,
+        stroke: 'cyan'
+    }),
+    circle1 = new Konva.Circle({
+        name: 'circle1',
+        x: window.innerWidth / 2,
+        y: 5,
+        radius: 5,
+        fill: 'magenta',
+        draggable: true
+    }),
+
+    circle2 = circle1.clone({
+        name: 'circle2',
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        radius: 5,
+        fill: 'magenta'
+    });
+
+    group.add(line, circle1, circle2)
+    stage.add(layer)
+    layer.add(group)
+
+    line.on('mouseover', function () {
+        stage.container().style.cursor = 'pointer';
+        line.strokeWidth(7);
+    });
+
+    line.on('mouseout', function () {
+        stage.container().style.cursor = 'default';
+        line.strokeWidth(5);
+    });
+
+    circle1.on('mouseover', function () {
+        stage.container().style.cursor = 'pointer';
+    });
+    circle1.on('mouseout', function () {
+        stage.container().style.cursor = 'default';
+    });
+
+    circle2.on('mouseover', function () {
+        stage.container().style.cursor = 'pointer';
+    });
+    circle2.on('mouseout', function () {
+        stage.container().style.cursor = 'default';
+    });
+
+
+    circle1.on('dragmove', function (e) {
+        const circle1Pos = circle1.getPosition(),
+            circle2Pos = circle2.getPosition();
+        line.position(circle1Pos);
+        line.points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y])
+    })
+
+    circle2.on('dragmove', function (e) {
+        const linePos = line.getPosition(),
+            circle2Pos = circle2.getPosition();
+        line.points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
+    })
+</script>
